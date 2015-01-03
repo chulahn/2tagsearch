@@ -1,6 +1,8 @@
 var searchResults = [];
 var counter = 0;
+
 var overlap = [];
+var currentOverlap = [];
 
 function buildRequestURL(tag) {
 
@@ -35,9 +37,9 @@ function makeRequest(t1reqUrl, t2reqUrl) {
 			console.log(searchResults)
 
 			if ((searchResults[0].data.length !== 0) && (searchResults[1].data.length !== 0)) {
-				console.log('valid');
-				findOverlap(counter);
-				findOverlap(counter+1);
+				console.log('makeRequest: both requests had data');
+				addOverlap(counter);
+				addOverlap(counter+1);
 			}
 
 		})		
@@ -47,44 +49,61 @@ function requestCb(res) {
 	searchResults.push(res);
 }
 
-//find overlapping tags by going thru each item that mathces first tag, going thru each of its tags and finding the 2nd tag.
-function findOverlap(ind) {
+//find overlapping tags by going thru each item that matches first tag,
+//and going thru each of its tags and finding the 2nd tag.
+function addOverlap(ind) {
 	var compareTag;
 	(ind%2 === 0) ? compareTag = t2 : compareTag = t1;
-	console.log(compareTag);
-	searchResults[ind].data.forEach(function(current) {
+	console.log("addOverlap: looking for tag " , compareTag , ind);
+	
+	searchResults[ind].data.forEach(function(currentPic) {
 
-		for (var i=0; i < current.tags.length; i++) {
+		for (var i=0; i < currentPic.tags.length; i++) {
 
-			if (current.tags[i] === compareTag) {
-				if (overlap.indexOf(current) === -1) {
+			if (currentPic.tags[i] === compareTag) {
 
-					overlap.push(current);
-					console.log('overlapped ' , compareTag , current);
+				if (!alreadyAdded(currentPic)) {
+
+					overlap.push(currentPic);
+					currentOverlap.push(currentPic);
+					console.log('overlapped adding ', currentPic.link);
 					break;
 				}
+
 				else {
-					alert('already in')
+					console.log('already in ' , currentPic.link)
 				}
+
 			}
 		}
 
 	});
-	appendResults();
-	
+	appendResults();	
 }
+
+function alreadyAdded(item) {
+
+	return overlap.some(function(curr) {
+		return (item.link === curr.link)
+	});
+
+}
+
 
 function appendResults(){
 
 	var appendHTML = "";
 
-	overlap.forEach(function(pic) {
-
-		appendHTML += "<img src=";
+	currentOverlap.forEach(function(pic) {
+		appendHTML += "<a href='";
+		appendHTML += pic.link;
+		appendHTML += "'><img src=";
 		appendHTML += pic.images.thumbnail.url;
-		appendHTML += "></img>";
+		appendHTML += "></img></a>";
 
 	});
+	currentOverlap = [];
+	appendHTML += "<br/>";
 	$('#matches').append(appendHTML);
 }
 
