@@ -1,9 +1,10 @@
 var searchResults = [];
-var counter = 0;
+var searchIndex = 0;
 
 var overlap = [];
-var currentOverlap = [];
+var currentOverlapStart = 0;
 
+//for creating the initial api calls
 function buildRequestURL(tag) {
 
 	var client_id = "09f502f5c4e944bd8b93b32ed166a80c"
@@ -16,19 +17,21 @@ function buildRequestURL(tag) {
 var t1reqUrl = buildRequestURL(t1);
 var t2reqUrl = buildRequestURL(t2);
 
+//make calls to API with both urls.
+//if there were pictures, find ones with both tags
 function makeRequest(t1reqUrl, t2reqUrl) {
 
 	var t1req =	$.ajax({
 		url : t1reqUrl,
 		dataType: "jsonp",
-		jsonpCallback: "requestCb"
+		jsonpCallback: "requestCb1"
 	});
 
 	var t2req = function() {
 		return $.ajax({
 			url : t2reqUrl,
 			dataType: "jsonp",
-			jsonpCallback: "requestCb"
+			jsonpCallback: "requestCb2"
 		});
 	}
 
@@ -36,89 +39,113 @@ function makeRequest(t1reqUrl, t2reqUrl) {
 		.done(function() {
 			console.log(searchResults)
 
-			if ((searchResults[0].data.length !== 0) && (searchResults[1].data.length !== 0)) {
+			if ((searchResults[searchIndex].data.length !== 0) && (searchResults[searchIndex+1].data.length !== 0)) {
 				console.log('makeRequest: both requests had data');
-				addOverlap(counter);
-				addOverlap(counter+1);
+				addOverlap(searchIndex);
+				addOverlap(searchIndex+1);
+			}
+
+			else {
+
+				//disable button
+
 			}
 
 		})		
 }
 
-function requestCb(res) {
+function requestCb1(res) {
+	res.otherTag = t1;
+	console.log(res)
 	searchResults.push(res);
 }
 
-//find overlapping tags by going thru each item that matches first tag,
-//and going thru each of its tags and finding the 2nd tag.
+function requestCb2(res) {
+	res.otherTag = t2;
+	console.log(res)
+	searchResults.push(res);
+}
+
+//find overlapping tags by going thru each item that matches first search tag,
+//then go thru each of its tags and find the 2nd search tag.
 function addOverlap(ind) {
-	var compareTag;
-	(ind%2 === 0) ? compareTag = t2 : compareTag = t1;
-	console.log("addOverlap: looking for tag " , compareTag , ind);
 	
+	var compareTag = searchResults[ind].otherTag;
 	searchResults[ind].data.forEach(function(currentPic) {
 
-		for (var i=0; i < currentPic.tags.length; i++) {
+		console.log("addOverlap: looking for tag " , compareTag);
 
+		for (var i=0; i < currentPic.tags.length; i++) {
 			if (currentPic.tags[i] === compareTag) {
 
 				if (!alreadyAdded(currentPic)) {
-
 					overlap.push(currentPic);
-					currentOverlap.push(currentPic);
-					console.log('overlapped adding ', currentPic.link);
 					break;
 				}
 
 				else {
-					console.log('already in ' , currentPic.link)
+					// console.log('already added ' , currentPic.link)
 				}
-
 			}
 		}
-
 	});
+
 	appendResults();	
-}
 
-function alreadyAdded(item) {
-
-	return overlap.some(function(curr) {
-		return (item.link === curr.link)
-	});
-
+	function alreadyAdded(item) {
+		return overlap.some(function(curr) {
+			return (item.link === curr.link)
+		});
+	}
 }
 
 
 function appendResults(){
 
 	var appendHTML = "";
+	appendHTML += searchIndex;
+
+	currentOverlap = overlap.slice(currentOverlapStart);
 
 	currentOverlap.forEach(function(pic) {
+		appendHTML += "<div class='container'>"
+
+		appendHTML += "<img src=";
+		appendHTML += pic.images.thumbnail.url;
+		appendHTML += "></img>";
+
 		appendHTML += "<a href='";
 		appendHTML += pic.link;
-		appendHTML += "'><img src=";
-		appendHTML += pic.images.thumbnail.url;
-		appendHTML += "></img></a>";
+		appendHTML += "'><div class='details'>"
+		appendHTML += "<span class='link'>"
+		appendHTML += pic.link.replace("http://instagram.com/p/" , "");
+		appendHTML += "</span>"
+		appendHTML += "</div></a></div>"
 
 	});
-	currentOverlap = [];
+
 	appendHTML += "<br/>";
+	currentOverlapStart = overlap.length;
+
 	$('#matches').append(appendHTML);
+	$('.details').hide();
+
 }
 
 function getNext() {
 
+	var firstURL = searchResults[searchIndex].pagination.next_url;
+	var secondURL = searchResults[searchIndex+1].pagination.next_url;
 
-	var firsturl = searchResults[counter].pagination.next_url;
-	var secondurl = searchResults[counter+1].pagination.next_url;
+	if (firstURL !== undefined && secondURL !== undefined) {
+		searchIndex += 2;
 
-	if (firsturl !== undefined && secondurl !== undefined) {
-		console.log(firsturl)
+		makeRequest(firstURL, secondURL);
 	}
 
-	makeRequest(firsturl, secondurl);
-	
+	else {
+
+	}	
 }
 
 
@@ -127,6 +154,14 @@ $(document).ready(function() {
 
 	$('#loadMore').click(function() {
 		getNext();
+	});
+
+	$(this).on('mouseover', '.container', function() {
+		$(this).find('.details').show();
+	});
+
+	$(this).on('mouseout', '.container', function() {
+		$(this).find('.details').hide();
 	});
 
 });
