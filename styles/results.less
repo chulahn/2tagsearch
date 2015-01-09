@@ -1,10 +1,16 @@
-.container {
+body, html {
+	width: 100%;
+	height: 100%;
+}
+
+header, h1 {
+	text-align: center;
+}
+
+#about {
 	display: inline-block;
-	position: relative;
-	width:auto;
-	height:auto;
-
-
+	width: 30%;
+	border: none;
 }
 
 .details {
@@ -13,14 +19,120 @@
 	left: 0px;
 	right: 0px;
 	bottom: 0px;
-
-	
-		background: rgba(0,0,0,.25);
-	
+	background: gray;
+	background: rgba(0,0,0,.25);
 }
 
 .link {
 	position: absolute;
 	bottom: 0;
 	color: white;
+}
+
+div {
+	border: 1px solid black;
+}
+
+#tagContainer {
+	width: 40%;
+	margin: 0 auto;
+	text-align: center;
+	border: none;
+
+	& span {
+		font-size: 20px;
+	}
+
+	& .tagName {
+		background-color: #265a88;
+		color: white;
+		padding: 3px;
+	}
+	& .tag {
+		border: 1px solid #265a88;
+		padding: 2px;
+		margin-left: -4px;
+	}
+}
+
+#buttonContainer {
+	text-align: center;
+	border: none;
+	margin-bottom: 10px;
+}
+
+.loadNext {
+	display: table;
+	margin: 0 auto;
+}
+
+#searchDiv {
+	border: 1px solid black;
+	border-radius: 5px;
+	margin: 10px auto;
+	padding: 10px;
+	width: 15%;
+
+	& input {
+		width: 150px;
+	}
+
+	& form {
+		text-align: center;
+	}
+
+	& button {
+		margin-top: 10px;
+	}
+}
+
+#matches {
+	text-align: center;
+}
+
+.picContainer {
+	display: inline-block;
+	position: relative;
+	width:auto;
+	height:auto;
+	border: none;
+}
+
+.descrip {
+	font-size: 16px;
+	color: white;
+	font-weight: bold;
+}
+
+#loadingContainer {
+	width: 100%;
+	height: 100%;
+	background-color: rgb(0,0,0);	
+	background-color: rgba(0,0,0,.5);
+	position: fixed;
+	z-index: 1;
+}
+
+#loadingContent {
+	display: table;
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	margin: auto;
+	width: 200px;
+	height: 200px;
+	border-radius: 5px;
+	background-color: rgb(0,0,0);	
+	background-color: rgba(0,0,0,.5);
+	text-align: center;
+	vertical-align: middle;
+	font-size: 30px;
+	color: white;
+
+	& span {
+		display: table-cell;
+		vertical-align: middle;
+	}
 }

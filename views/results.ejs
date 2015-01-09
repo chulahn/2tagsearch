@@ -6,12 +6,10 @@
 
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap-theme.min.css">
-	<link rel="stylesheet/less" href="../styles/results.less">
+	<link rel="stylesheet" href="../styles/results.css">
 
 	<script src="http://code.jquery.com/jquery-2.1.3.min.js"></script>
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
-	<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/less.js/2.1.2/less.min.js"></script>
-
 
 	<script>
 		var t1 = "<%- t1 %>";
@@ -22,13 +20,35 @@
 
 </head>
 <body>
+
+	<div id="loadingContainer">
+		<div id="loadingContent">
+			<span>Loading</span>
+		</div>
+	</div>
+	<br/>
+	<div id="tagContainer">
+		<span class="tagName">Tag 1</span> <span class="tag"><%- t1 %></span>
+		<span class="tagName">Tag 2</span> <span class="tag"><%- t2 %></span>
+	</div><br/>
 	
-	<span class="btn btn-default" id="loadMore" role="button">Load More</span>
+	<div id="buttonContainer">
+		<span class="btn btn-primary" class="loadNext" role="button">Load More</span>
+		<span class="btn btn-success" id="searchMore" role="button">Another Search (+)</span><br/>
+	</div>
+
+	<div id="searchDiv">
+		<form method="post" action="/search">
+			<label>Tag 1</label><input id="tag1" name="tag1"><br/>
+			<label>Tag 2</label><input id="tag2" name="tag2"><br/>
+			<button class="btn btn-primary" type="submit">Search</button>
+		</form>
+	</div>
 
 	<div id="matches">
-
-
 	</div>
+
+	<span class="btn btn-primary loadNext" role="button">Load More</span>
 
 </body>
 </html>

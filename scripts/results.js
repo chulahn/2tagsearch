@@ -1,10 +1,11 @@
 var searchResults = [];
 var searchIndex = 0;
+var lastAddedIndex = -1;
 
 var overlap = [];
 var currentOverlapStart = 0;
 
-//for creating the initial api calls
+//for creating the initial api call
 function buildRequestURL(tag) {
 
 	var client_id = "09f502f5c4e944bd8b93b32ed166a80c"
@@ -19,7 +20,7 @@ var t2reqUrl = buildRequestURL(t2);
 
 //make calls to API with both urls.
 //if there were pictures, find ones with both tags
-function makeRequest(t1reqUrl, t2reqUrl) {
+function initialRequest(t1reqUrl, t2reqUrl) {
 
 	var t1req =	$.ajax({
 		url : t1reqUrl,
@@ -37,12 +38,14 @@ function makeRequest(t1reqUrl, t2reqUrl) {
 
 	t1req.then(t2req)
 		.done(function() {
-			console.log(searchResults)
+			// console.log(searchResults)
 
 			if ((searchResults[searchIndex].data.length !== 0) && (searchResults[searchIndex+1].data.length !== 0)) {
-				console.log('makeRequest: both requests had data');
+				console.log('initialRequest: both requests had data');
 				addOverlap(searchIndex);
-				addOverlap(searchIndex+1);
+				searchIndex++;
+				addOverlap(searchIndex);
+				searchIndex--;
 			}
 
 			else {
@@ -54,26 +57,29 @@ function makeRequest(t1reqUrl, t2reqUrl) {
 		})		
 }
 
+//adds response to array
 function requestCb1(res) {
-	res.otherTag = t1;
-	console.log(res)
+	res.otherTag = t2;
+	//console.log(res);
 	searchResults.push(res);
+	console.log(searchResults.length)
+	lastAddedIndex = searchResults.length - 1;
 }
 
 function requestCb2(res) {
-	res.otherTag = t2;
-	console.log(res)
+	res.otherTag = t1;
+	//console.log(res);
 	searchResults.push(res);
+	lastAddedIndex = searchResults.length - 1;
 }
 
 //find overlapping tags by going thru each item that matches first search tag,
-//then go thru each of its tags and find the 2nd search tag.
+//then go thru each of its tags and find the 2nd search tag(otherTag).
 function addOverlap(ind) {
-	
-	var compareTag = searchResults[ind].otherTag;
-	searchResults[ind].data.forEach(function(currentPic) {
 
-		console.log("addOverlap: looking for tag " , compareTag);
+	var compareTag = searchResults[ind].otherTag;
+	console.log(ind, "addOverlap: looking for tag " , compareTag , searchResults[ind]);
+	searchResults[ind].data.forEach(function(currentPic) {
 
 		for (var i=0; i < currentPic.tags.length; i++) {
 			if (currentPic.tags[i] === compareTag) {
@@ -84,14 +90,18 @@ function addOverlap(ind) {
 				}
 
 				else {
-					// console.log('already added ' , currentPic.link)
+					console.log('already added ' , currentPic.link)
 				}
 			}
 		}
 	});
 
-	appendResults();	
 
+
+	appendResults();
+	$('#loadingContainer').hide();
+
+	//checks if a pic was already added
 	function alreadyAdded(item) {
 		return overlap.some(function(curr) {
 			return (item.link === curr.link)
@@ -99,68 +109,87 @@ function addOverlap(ind) {
 	}
 }
 
-
-function appendResults(){
-
+function appendResults() {
 	var appendHTML = "";
-	appendHTML += searchIndex;
 
 	currentOverlap = overlap.slice(currentOverlapStart);
 
 	currentOverlap.forEach(function(pic) {
-		appendHTML += "<div class='container'>"
+		appendHTML += "<a href='";
+		appendHTML += pic.link;
+		appendHTML += "'>"
+		
+		appendHTML += "<div class='picContainer'>"
 
 		appendHTML += "<img src=";
 		appendHTML += pic.images.thumbnail.url;
 		appendHTML += "></img>";
 
-		appendHTML += "<a href='";
-		appendHTML += pic.link;
-		appendHTML += "'><div class='details'>"
-		appendHTML += "<span class='link'>"
-		appendHTML += pic.link.replace("http://instagram.com/p/" , "");
-		appendHTML += "</span>"
-		appendHTML += "</div></a></div>"
+		appendHTML += "<div class='details'>";
+		
+		appendHTML += "<span class='descrip'>";
+		var text = pic.caption.text.toString();
+		var slice = text.slice(0, 40);
+		appendHTML += ( (text.length > 40) ? slice + "..." : slice );
+		appendHTML += "</span>";
 
+		appendHTML += "</div></div></a>";
 	});
 
-	appendHTML += "<br/>";
 	currentOverlapStart = overlap.length;
 
 	$('#matches').append(appendHTML);
 	$('.details').hide();
-
 }
 
+//gets next url from last searched Index, makes call to API and adds overlapping data
 function getNext() {
+	var next = searchResults[searchIndex];
+	var cb;
+	var reqURL = next.pagination.next_url;
+	(next.otherTag === t1) ? cb = requestCb2 : cb = requestCb1;
 
-	var firstURL = searchResults[searchIndex].pagination.next_url;
-	var secondURL = searchResults[searchIndex+1].pagination.next_url;
+	console.log("getNext: searching " ,next.otherTag, " in " , searchIndex , next.data.length , cb.name)
 
-	if (firstURL !== undefined && secondURL !== undefined) {
-		searchIndex += 2;
+	var request = $.ajax({
+		url : reqURL,
+		dataType: "jsonp",
+		jsonpCallback: cb.name
+	});
 
-		makeRequest(firstURL, secondURL);
-	}
-
-	else {
-
-	}	
+	request.done(function() {
+		addOverlap(lastAddedIndex);
+		searchIndex++;
+	});
 }
-
 
 $(document).ready(function() {
-	makeRequest(t1reqUrl, t2reqUrl);
+	$('#searchDiv').hide();
 
-	$('#loadMore').click(function() {
+	$('#loadingContainer').show();
+	initialRequest(t1reqUrl, t2reqUrl);
+	
+	$('#searchMore').click(function() {
+		if ($('#searchDiv').css('display') === "none") {
+			$('#searchMore').html("Another Search (-)")
+			$('#searchDiv').show();
+		}
+		else {
+			$('#searchDiv').hide();
+			$('#searchMore').html("Another Search (+)")
+		}
+	});
+
+	$('.loadNext').click(function() {
+		$('#loadingContainer').show();
 		getNext();
 	});
 
-	$(this).on('mouseover', '.container', function() {
+	$(this).on('mouseover', '.picContainer', function() {
 		$(this).find('.details').show();
 	});
 
-	$(this).on('mouseout', '.container', function() {
+	$(this).on('mouseout', '.picContainer', function() {
 		$(this).find('.details').hide();
 	});
 

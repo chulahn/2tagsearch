@@ -3,30 +3,33 @@
 <head>
 	<meta charset="UTF-8">
 	<title>Instagram 2 tags</title>
-	<script src="http://code.jquery.com/jquery-2.1.3.min.js"></script>
-	<script>
 
-		$(document).ready(function() {
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap-theme.min.css">
+	<link rel="stylesheet" href="../styles/results.css">
 
-		});
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
 
-	</script>
 </head>
+
 <body>
+	<header>
+		<h1>2 Tag Search</h1>
 	
-	<form id="form" method="post" action="/search">
-	
-		<input id="tag1" name="tag1">
-			Tag1	
-		</input>
+		<div id="about">
+			This is a web-app that searches images on Instagram that match two hashtags that you, the user inputs.
+		</div>
 
-		
-		<input id="tag2" name="tag2">
-			Tag2
-		</input>
 
-		<button type="submit">Search</button>
-	</form>
+	</header>
+
+	<div id="searchDiv">
+		<form method="post" action="/search">
+			<label>Tag 1</label><input id="tag1" name="tag1"><br/>
+			<label>Tag 2</label><input id="tag2" name="tag2"><br/>
+			<button class="btn btn-primary" type="submit">Search</button>
+		</form>
+	</div>
 
 
 </body>
