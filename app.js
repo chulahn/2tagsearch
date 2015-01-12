@@ -11,23 +11,23 @@ app.get('/', function(req, res) {
 });
 
 app.post('/search', function(req,res) {
-	var t1 = req.body['tag1']
-	var t2 = req.body['tag2']
+	var t1 = req.body['tag1'];
+	var t2 = req.body['tag2'];
 
 	res.render("results.ejs", {"t1":t1 , "t2":t2});
 });
 
 app.get('/scripts/results.js', function(req, res) {
-	res.sendfile('scripts/results.js')
+	res.sendfile('scripts/results.js');
 });
 
 app.get('/styles/results.css', function(req, res) {
-	res.sendfile('styles/results.css')
+	res.sendfile('styles/results.css');
 });
 
 
 app.get('/styles/results.less', function(req, res) {
-	res.sendfile('styles/results.less')
+	res.sendfile('styles/results.less');
 });
 
 

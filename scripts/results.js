@@ -8,9 +8,9 @@ var currentOverlapStart = 0;
 //for creating the initial api call
 function buildRequestURL(tag) {
 
-	var client_id = "09f502f5c4e944bd8b93b32ed166a80c"
+	var client_id = "09f502f5c4e944bd8b93b32ed166a80c";
 	var baseURL = "https://api.instagram.com/v1/tags/" + tag + "/media/recent?client_id=" + client_id;
-	baseURL += "&count=33"
+	baseURL += "&count=33";
 
 	return baseURL;
 }
@@ -34,7 +34,7 @@ function initialRequest(t1reqUrl, t2reqUrl) {
 			dataType: "jsonp",
 			jsonpCallback: "requestCb2"
 		});
-	}
+	};
 
 	t1req.then(t2req)
 		.done(function() {
@@ -54,7 +54,7 @@ function initialRequest(t1reqUrl, t2reqUrl) {
 
 			}
 
-		})		
+		});		
 }
 
 //adds response to array
@@ -62,7 +62,7 @@ function requestCb1(res) {
 	res.otherTag = t2;
 	//console.log(res);
 	searchResults.push(res);
-	console.log(searchResults.length)
+	console.log(searchResults.length);
 	lastAddedIndex = searchResults.length - 1;
 }
 
@@ -90,7 +90,7 @@ function addOverlap(ind) {
 				}
 
 				else {
-					console.log('already added ' , currentPic.link)
+					console.log('already added ' , currentPic.link);
 				}
 			}
 		}
@@ -104,7 +104,7 @@ function addOverlap(ind) {
 	//checks if a pic was already added
 	function alreadyAdded(item) {
 		return overlap.some(function(curr) {
-			return (item.link === curr.link)
+			return (item.link === curr.link);
 		});
 	}
 }
@@ -117,9 +117,9 @@ function appendResults() {
 	currentOverlap.forEach(function(pic) {
 		appendHTML += "<a href='";
 		appendHTML += pic.link;
-		appendHTML += "'>"
+		appendHTML += "'>";
 		
-		appendHTML += "<div class='picContainer'>"
+		appendHTML += "<div class='picContainer'>";
 
 		appendHTML += "<img src=";
 		appendHTML += pic.images.thumbnail.url;
@@ -149,7 +149,7 @@ function getNext() {
 	var reqURL = next.pagination.next_url;
 	(next.otherTag === t1) ? cb = requestCb2 : cb = requestCb1;
 
-	console.log("getNext: searching " ,next.otherTag, " in " , searchIndex , next.data.length , cb.name)
+	console.log("getNext: searching " ,next.otherTag, " in " , searchIndex , next.data.length , cb.name);
 
 	var request = $.ajax({
 		url : reqURL,
@@ -171,12 +171,12 @@ $(document).ready(function() {
 	
 	$('#searchMore').click(function() {
 		if ($('#searchDiv').css('display') === "none") {
-			$('#searchMore').html("Another Search (-)")
+			$('#searchMore').html("Another Search (-)");
 			$('#searchDiv').show();
 		}
 		else {
 			$('#searchDiv').hide();
-			$('#searchMore').html("Another Search (+)")
+			$('#searchMore').html("Another Search (+)");
 		}
 	});
 
