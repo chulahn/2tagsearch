@@ -166,7 +166,13 @@ function appendResults() {
 		appendHTML += pic.images.thumbnail.url;
 		appendHTML += "></img>";
 
-		appendHTML += "<div class='details'>";
+		appendHTML += "<div class='details";
+
+		// if ((lastAddedIndex % 2) == 1) {
+		// 	appendHTML += " odd";
+		// }
+
+		appendHTML += "'>"
 		
 		appendHTML += "<span class='descrip'>";
 		var text = (pic.caption && pic.caption.text.toString()) || "";
