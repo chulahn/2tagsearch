@@ -4,6 +4,7 @@ var lastAddedIndex = -1;
 
 var overlap = [];
 var currentOverlapStart = 0;
+var firstCall = true;
 
 //for creating the initial api call
 function buildRequestURL(tag) {
@@ -54,11 +55,14 @@ function initialRequest(t1reqUrl, t2reqUrl) {
 
 			}
 
-		});		
+		});	
+
+	firstCall = false;	
 }
 
 //adds response to array
 function requestCb1(res) {
+	res.searchQuery = t1;
 	res.otherTag = t2;
 	//console.log(res);
 	searchResults.push(res);
@@ -67,11 +71,39 @@ function requestCb1(res) {
 }
 
 function requestCb2(res) {
+	res.searchQuery = t2;
 	res.otherTag = t1;
 	//console.log(res);
 	searchResults.push(res);
 	lastAddedIndex = searchResults.length - 1;
 }
+
+//gets next url from last searched Index, makes call to API and adds overlapping data
+function getNext() {
+	var next = searchResults[searchIndex];
+	var cb;
+	var reqURL = next.pagination.next_url;
+
+	changeLoadingText();
+
+	$('#loadingContainer').show();
+
+	(next.otherTag === t1) ? cb = requestCb2 : cb = requestCb1;
+
+	console.log("getNext: searching " ,next.otherTag, " in " , searchIndex , next.data.length , cb.name);
+
+	var request = $.ajax({
+		url : reqURL,
+		dataType: "jsonp",
+		jsonpCallback: cb.name
+	});
+
+	request.done(function() {
+		addOverlap(lastAddedIndex);
+		searchIndex++;
+	});
+}
+
 
 //find overlapping tags by going thru each item that matches first search tag,
 //then go thru each of its tags and find the 2nd search tag(otherTag).
@@ -109,6 +141,7 @@ function addOverlap(ind) {
 	}
 }
 
+//shows images that have both tags on screen.
 function appendResults() {
 	var appendHTML = "";
 
@@ -128,7 +161,7 @@ function appendResults() {
 		appendHTML += "<div class='details'>";
 		
 		appendHTML += "<span class='descrip'>";
-		var text = pic.caption.text.toString();
+		var text = (pic.caption && pic.caption.text.toString()) || "";
 		var slice = text.slice(0, 40);
 		appendHTML += ( (text.length > 40) ? slice + "..." : slice );
 		appendHTML += "</span>";
@@ -142,26 +175,16 @@ function appendResults() {
 	$('.details').hide();
 }
 
-//gets next url from last searched Index, makes call to API and adds overlapping data
-function getNext() {
-	var next = searchResults[searchIndex];
-	var cb;
-	var reqURL = next.pagination.next_url;
-	(next.otherTag === t1) ? cb = requestCb2 : cb = requestCb1;
+function changeLoadingText() {
 
-	console.log("getNext: searching " ,next.otherTag, " in " , searchIndex , next.data.length , cb.name);
+	var current = searchResults[searchIndex];
+	output = "<span class='header'>Loading</span><br/>";
+	output += "Searching images tagged with<br/><span class='tag'>" + current.searchQuery + "</span></br> for  tag <br/><span class='tag'>" + current.otherTag + "</span>";
 
-	var request = $.ajax({
-		url : reqURL,
-		dataType: "jsonp",
-		jsonpCallback: cb.name
-	});
-
-	request.done(function() {
-		addOverlap(lastAddedIndex);
-		searchIndex++;
-	});
+	$('#loadingContent').html(output);
 }
+
+
 
 $(document).ready(function() {
 	$('#searchDiv').hide();
@@ -181,7 +204,6 @@ $(document).ready(function() {
 	});
 
 	$('.loadNext').click(function() {
-		$('#loadingContainer').show();
 		getNext();
 	});
 
@@ -191,6 +213,24 @@ $(document).ready(function() {
 
 	$(this).on('mouseout', '.picContainer', function() {
 		$(this).find('.details').hide();
+	});
+
+
+	$(window).scroll(function() {
+
+
+
+		var endOfPage = $(document).height();
+		var currentPosition = $(window).scrollTop() + $(window).height();
+
+
+		if (currentPosition === endOfPage) {
+
+			if (!(firstCall)) {
+	        	getNext();
+			}
+		}
+
 	});
 
 });

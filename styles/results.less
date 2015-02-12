@@ -43,7 +43,7 @@ div {
 		font-size: 20px;
 	}
 
-	& .tagName {
+	& .title {
 		background-color: #265a88;
 		color: white;
 		padding: 3px;
@@ -113,7 +113,7 @@ div {
 	z-index: 1;
 }
 
-#loadingContent {
+#loadingContentDiv {
 	display: table;
 	position: absolute;
 	top: 0;
@@ -121,18 +121,27 @@ div {
 	left: 0;
 	right: 0;
 	margin: auto;
-	width: 200px;
+	width: 400px;
 	height: 200px;
 	border-radius: 5px;
 	background-color: rgb(0,0,0);	
 	background-color: rgba(0,0,0,.5);
 	text-align: center;
 	vertical-align: middle;
-	font-size: 30px;
+	font-size: 20px;
 	color: white;
 
-	& span {
+	& div {
+		font-size: 20px;
 		display: table-cell;
 		vertical-align: middle;
+	}
+
+	& .header {
+		font-size: 30px;
+	}
+
+	& .tag {
+		color: #265a88;
 	}
 }
