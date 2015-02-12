@@ -2,8 +2,9 @@ var searchResults = [];
 var searchIndex = 0;
 var lastAddedIndex = -1;
 
-var overlap = [];
-var currentOverlapStart = 0;
+var matchedData = [];
+var lastCheckedMatchIndex = 0;
+
 var firstCall = true;
 
 //for creating the initial api call
@@ -43,9 +44,9 @@ function initialRequest(t1reqUrl, t2reqUrl) {
 
 			if ((searchResults[searchIndex].data.length !== 0) && (searchResults[searchIndex+1].data.length !== 0)) {
 				console.log('initialRequest: both requests had data');
-				addOverlap(searchIndex);
+				findMatches(searchIndex);
 				searchIndex++;
-				addOverlap(searchIndex);
+				findMatches(searchIndex);
 				searchIndex--;
 			}
 
@@ -57,6 +58,7 @@ function initialRequest(t1reqUrl, t2reqUrl) {
 
 		});	
 
+	console.log('-------------------');
 	firstCall = false;	
 }
 
@@ -66,7 +68,7 @@ function requestCb1(res) {
 	res.otherTag = t2;
 	//console.log(res);
 	searchResults.push(res);
-	console.log(searchResults.length);
+	// console.log(searchResults.length);
 	lastAddedIndex = searchResults.length - 1;
 }
 
@@ -88,6 +90,7 @@ function getNext() {
 
 	$('#loadingContainer').show();
 
+	// alert(next.otherTag + " " + searchIndex)
 	(next.otherTag === t1) ? cb = requestCb2 : cb = requestCb1;
 
 	console.log("getNext: searching " ,next.otherTag, " in " , searchIndex , next.data.length , cb.name);
@@ -99,26 +102,28 @@ function getNext() {
 	});
 
 	request.done(function() {
-		addOverlap(lastAddedIndex);
 		searchIndex++;
+		findMatches(lastAddedIndex);
 	});
 }
 
 
 //find overlapping tags by going thru each item that matches first search tag,
 //then go thru each of its tags and find the 2nd search tag(otherTag).
-function addOverlap(ind) {
+function findMatches(ind) {
+
+	var before = matchedData.slice();
 
 	var compareTag = searchResults[ind].otherTag;
-	console.log(ind, "addOverlap: looking for tag " , compareTag , searchResults[ind]);
+	console.log(ind, "findMatches: looking for tag " , compareTag , searchResults[ind]);
 	searchResults[ind].data.forEach(function(currentPic) {
 
 		for (var i=0; i < currentPic.tags.length; i++) {
 			if (currentPic.tags[i] === compareTag) {
 
 				if (!alreadyAdded(currentPic)) {
-					overlap.push(currentPic);
-					break;
+					matchedData.push(currentPic);
+					// break;
 				}
 
 				else {
@@ -128,14 +133,18 @@ function addOverlap(ind) {
 		}
 	});
 
+	if (matchedData.length === before.length) {
+		getNext();
+	}
 
-
-	appendResults();
-	$('#loadingContainer').hide();
+	else {
+		$('#loadingContainer').hide();
+		appendResults();
+	}
 
 	//checks if a pic was already added
 	function alreadyAdded(item) {
-		return overlap.some(function(curr) {
+		return matchedData.some(function(curr) {
 			return (item.link === curr.link);
 		});
 	}
@@ -145,7 +154,8 @@ function addOverlap(ind) {
 function appendResults() {
 	var appendHTML = "";
 
-	currentOverlap = overlap.slice(currentOverlapStart);
+	var before = lastCheckedMatchIndex;
+	currentOverlap = matchedData.slice(lastCheckedMatchIndex);
 
 	currentOverlap.forEach(function(pic) {
 		appendHTML += "<a href='";
@@ -169,16 +179,16 @@ function appendResults() {
 		appendHTML += "</div></div></a>";
 	});
 
-	currentOverlapStart = overlap.length;
-
-	$('#matches').append(appendHTML);
+	lastCheckedMatchIndex = matchedData.length;
+	console.log('before ' , before , 'current ' , lastCheckedMatchIndex)
+	$('#matchedPics').append(appendHTML);
 	$('.details').hide();
 }
 
 function changeLoadingText() {
 
 	var current = searchResults[searchIndex];
-	output = "<span class='header'>Loading</span><br/>";
+	output = "<span class='header'>Loading " + searchIndex + "</span><br/>";
 	output += "Searching images tagged with<br/><span class='tag'>" + current.searchQuery + "</span></br> for  tag <br/><span class='tag'>" + current.otherTag + "</span>";
 
 	$('#loadingContent').html(output);
