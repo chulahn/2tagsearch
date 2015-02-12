@@ -5,8 +5,6 @@ var lastAddedIndex = -1;
 var matchedData = [];
 var lastCheckedMatchIndex = 0;
 
-var firstCall = true;
-
 //for creating the initial api call
 function buildRequestURL(tag) {
 
@@ -59,7 +57,7 @@ function initialRequest(t1reqUrl, t2reqUrl) {
 		});	
 
 	console.log('-------------------');
-	firstCall = false;	
+
 }
 
 //adds response to array
@@ -228,15 +226,12 @@ $(document).ready(function() {
 
 	$(window).scroll(function() {
 
-
-
 		var endOfPage = $(document).height();
 		var currentPosition = $(window).scrollTop() + $(window).height();
 
-
 		if (currentPosition === endOfPage) {
 
-			if (!(firstCall)) {
+			if (lastAddedIndex >= 2) {
 	        	getNext();
 			}
 		}
