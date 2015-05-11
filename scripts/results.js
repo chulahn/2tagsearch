@@ -5,10 +5,11 @@ var lastAddedIndex = -1;
 var matchedData = [];
 var lastCheckedMatchIndex = 0;
 
+var client_id =  "09f502f5c4e944bd8b93b32ed166a80c";
+
 //for creating the initial api call
 function buildRequestURL(tag) {
 
-	var client_id = "09f502f5c4e944bd8b93b32ed166a80c";
 	var baseURL = "https://api.instagram.com/v1/tags/" + tag + "/media/recent?client_id=" + client_id;
 	baseURL += "&count=33";
 
@@ -64,9 +65,9 @@ function initialRequest(t1reqUrl, t2reqUrl) {
 function requestCb1(res) {
 	res.searchQuery = t1;
 	res.otherTag = t2;
-	//console.log(res);
+	console.log(res);
 	searchResults.push(res);
-	// console.log(searchResults.length);
+	console.log(searchResults.length);
 	lastAddedIndex = searchResults.length - 1;
 }
 

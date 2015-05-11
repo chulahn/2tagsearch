@@ -4,18 +4,22 @@
   "description": "Web app used to search Instagram for images that contain both hashtags user input.",
   "main": "app.js",
   "scripts": {
-    "start" : "node app.js",
+    "start": "node app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "engines": {
-    "node": "0.10.33"
-  },
   "dependencies": {
-  	"express": "4.11.2",
-  	"ejs": "2.2.4",
-  	"body-parser": "1.11.0",
-  	"request" : "2.53.0"
+    "express": "x",
+    "ejs": "x",
+    "body-parser": "1.11.0",
+    "request": "2.53.0"
   },
   "author": "Chul Ahn",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "gulp-less": "^3.0.2",
+    "gulp-livereload": "^3.8.0",
+    "gulp-minify-css": "^1.0.0",
+    "gulp-rename": "^1.2.2",
+    "livereload": "^0.3.6"
+  }
 }
