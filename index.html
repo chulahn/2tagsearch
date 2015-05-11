@@ -2,20 +2,45 @@
 <html lang="en">
 <head>
 	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<title>Instagram 2 tags</title>
 
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap-theme.min.css">
 	<link rel="stylesheet" href="../styles/results.css">
-
+	
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
 
 </head>
 
 <body>
-	<header>
+
+	<nav class="navbar navbar-inverse navbar-fixed-top">
+		<div class="container">
+			<div class="navbar-header">
+				<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+					<span class="sr-only">Toggle navigation</span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+				</button>
+				<a class="navbar-brand" href="#">2 Tag Search</a>
+			</div>
+			<div id="navbar" class="collapse navbar-collapse">
+				<ul class="nav navbar-nav">
+					<li class="active"><a href="#">Home</a></li>
+					<li><a href="#about">About</a></li>
+					<li><a href="#contact">Contact</a></li>
+				</ul>
+			</div>
+		</div>
+	</nav>
+
+	<header class="container">
+
 		<h1>2 Tag Search</h1>
-	
+
 		<div id="about">
 			<h4>Find Instagram posts that have both the hashtags you are looking for.</h4>
 
@@ -23,15 +48,14 @@
 
 			<ol>
 				<li>Finds all the images that have the first hashtag.</li>
-				<li>From those results, find the images with the second hashtag.</li>
-				<li>Repeat except search images with second hashtag, and find the ones that have the first.</li>
+				<li>From those results, filter the images that contain the second hashtag.</li>
+				<li>Repeat except search images with second hashtag, and filter the result images that have the first hashtag.</li>
 			</ol>
 		</div>
 
-
 	</header>
 
-	<div id="searchDiv">
+	<div class="container" id="searchDiv">
 		<form method="post" action="/search">
 			<label>Tag 1</label><input id="tag1" name="tag1"><br/>
 			<label>Tag 2</label><input id="tag2" name="tag2"><br/>
