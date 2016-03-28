@@ -1,7 +1,8 @@
-# 2tagsearch
+2tagsearch
+================
 A search engine for Instagram
 
-<a href="http://multi-hashtag-search.herokuapp.com/>Link to the app</a>
+<a href="http://multi-hashtag-search.herokuapp.com/">Link to the app</a>
 
 <h3>About / Why</h3>
 
