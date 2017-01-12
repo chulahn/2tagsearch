@@ -12,10 +12,3 @@ As a shoe collector, I wanted to look at pictures of a particular shoe the Nike 
 <uo>
   <li>It firsts searches for #tag1 images.  From those images, go through all the tags until #tag2 is found and append to matched results.
   <li>Then it switches to searching for #tag2 images first instead, and then matching #tag1.  Results should have no repeats
-
-
-<h3>How was it made?</h3>
-<ul>
-  <li><b>JQuery</b> - Event-Handling and Making Requests
-  <li><b>Bootstrap</b> - Front-End
-</ul>
