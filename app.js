@@ -13,8 +13,9 @@ app.get('/', function(req, res) {
 app.post('/search', function(req,res) {
 	var t1 = req.body['tag1'];
 	var t2 = req.body['tag2'];
+  var accessToken = req.body['accessToken'];
 
-	res.render("results.ejs", {"t1":t1 , "t2":t2});
+	res.render("results.ejs", {"t1":t1 , "t2":t2, "accessToken":accessToken});
 });
 
 app.get('/scripts/results.js', function(req, res) {
