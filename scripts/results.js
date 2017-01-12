@@ -10,7 +10,7 @@ var client_id =  "09f502f5c4e944bd8b93b32ed166a80c";
 //for creating the initial api call
 function buildRequestURL(tag) {
 
-	var baseURL = "https://api.instagram.com/v1/tags/" + tag + "/media/recent?client_id=" + client_id;
+	var baseURL = "https://api.instagram.com/v1/tags/" + tag + "/media/recent?access_token=" + accessToken;
 	baseURL += "&count=33";
 
 	return baseURL;
@@ -28,7 +28,7 @@ function initialRequest(t1reqUrl, t2reqUrl) {
 		dataType: "jsonp",
 		jsonpCallback: "requestCb1"
 	});
-
+	console.log(t1reqUrl);
 	var t2req = function() {
 		return $.ajax({
 			url : t2reqUrl,
